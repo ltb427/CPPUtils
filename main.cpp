@@ -14,7 +14,7 @@ int main()
 {
 	std::thread th(thread_fun);
 	std::unique_lock<std::mutex> lk(g_lk);
-	if (g_cv.wait_for(lk,std::chrono::seconds(5)) == std::cv_status::timeout)
+	if (g_cv.wait_for(lk,std::chrono::seconds(10)) == std::cv_status::timeout)
 	{
 		std::cout << "timeout" << std::endl;
 	}
@@ -29,5 +29,8 @@ int main()
 void thread_fun(void)
 {
 	std::cin >> g_value;
-	g_cv.notify_one();
+	if (g_value == 10)
+	{
+		g_cv.notify_one();
+	}
 }
