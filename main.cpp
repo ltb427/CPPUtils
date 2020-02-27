@@ -3,20 +3,37 @@
 #include <mutex>
 #include <functional>
 
-class HelloThread
+static std::mutex mt;
+static int data = 1;
+
+void add(int a)
 {
-public:
-	void hello(int year)
+	while (1)
 	{
-		std::cout << "I am " << year << " old" << std::endl;
+		mt.lock();
+		data += a;
+		std::cout << "add data= " << data << std::endl;
+		mt.unlock();
 	}
-};
+}
+
+void cut(int a)
+{
+	while (1)
+	{
+		mt.lock();
+		data -= a;
+		std::cout << "cut data= " << data << std::endl;
+		mt.unlock();
+	}
+}
 
 int main(int argc, char* argv[])
 {
-	HelloThread obj;
-	std::thread th(std::bind(&HelloThread::hello, &obj, 26));
-	th.join();
+	std::thread th1(add, 2);
+	std::thread th2(cut, 1);
+	th1.join();
+	th2.join();
 	return 0;
 }
 
