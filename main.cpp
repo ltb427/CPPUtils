@@ -2,6 +2,19 @@
 #include <thread>
 #include <mutex>
 
+class HelloThread 
+{
+public:
+	static void hellothread()
+	{
+		std::cout << "Hello World, I'm A Thread" << std::endl;
+	}
+	static void start()
+	{
+		std::thread th(hellothread);
+		th.join();
+	}
+};
 
 int hello_thread(int a, int b)
 {
@@ -12,9 +25,7 @@ int hello_thread(int a, int b)
 
 int main()
 {
-	std::thread th(hello_thread, 1, 2);
-	th.join();
-	std::cout << "Main Thread" << std::endl;
+	HelloThread::start();
 	return 0;
 }
 
