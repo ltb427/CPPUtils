@@ -3,44 +3,20 @@
 #include <mutex>
 #include <functional>
 
-class HelloThread 
+class HelloThread
 {
 public:
-	void hellothread()
+	void hello(int year)
 	{
-		std::cout << "Hello World, I'm A Thread" << std::endl;
+		std::cout << "I am " << year << " old" << std::endl;
 	}
-	static void start()
-	{
-		std::thread th(std::bind(&HelloThread::hellothread, &HelloThread::getInsttance()));
-		th.join();
-	}
-	static HelloThread& getInsttance()
-	{
-		if (instance == nullptr)
-		{
-			instance = new HelloThread;
-		}
-		return *instance;
-	}
-private:
-	HelloThread() = default;
-	static HelloThread* instance;
 };
 
-//类的静态成员初始化
-HelloThread* HelloThread::instance = nullptr;
-
-int hello_thread(int a, int b)
+int main(int argc, char* argv[])
 {
-	int c = a + b;
-	std::cout << a << "+" << b << "=" << c << std::endl;
-	return c;
-}
-
-int main()
-{
-	HelloThread::start();
+	HelloThread obj;
+	std::thread th(std::bind(&HelloThread::hello, &obj, 26));
+	th.join();
 	return 0;
 }
 
