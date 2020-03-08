@@ -1,6 +1,6 @@
 #include "screen.h"
 
-namespace screen_display {
+namespace yukai {
 
 	Screen::Screen(pos ht, pos wd, pos c)
 		:m_Height(ht), m_Width(wd), m_Contents(ht* wd, c)

@@ -8,7 +8,7 @@ screen类表示一个窗口，每个Screen对象包含一个用于保存Screen�
 #include <string>
 #include <iostream>
 
-namespace screen_display {
+namespace yukai {
 	
 	class Screen
 	{
