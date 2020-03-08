@@ -1,5 +1,6 @@
 #include "immutable_string.h"
 #include <string.h>
+#include <stdio.h>
 
 namespace yukai
 {
@@ -8,10 +9,12 @@ namespace yukai
 	{
 		if (m_Size < buffer_size)
 		{
+			printf("by char[16]\n");
 			strcpy_s(m_String_Buffer, buffer_size, str);
 		}
 		else
 		{
+			printf("-----------by new\n");
 			m_String_ptr = new char[m_Size + 1];
 			strcpy_s(m_String_ptr, m_Size + 1, str);
 		}
@@ -21,6 +24,7 @@ namespace yukai
 	{
 		if (m_Size >= buffer_size)
 		{
+			printf("-----------by delete\n");
 			delete[] m_String_ptr;
 		}
 	}
