@@ -1,39 +1,62 @@
-#include <iostream>
-#include <thread>
-#include <mutex>
-#include <functional>
+#include<iostream>
+#include<thread>
+#include<mutex>
+#include<condition_variable>
+#include<chrono>
 
-static std::mutex mt;
-static int data = 1;
+using namespace std;
 
-void add(int a)
+int						 g_semValue = -1;
+std::mutex 				 g_mutex;
+std::condition_variable  g_cv;
+
+void thread_fun(void);
+void thread_fun1(void);
+
+int main()
 {
-	while (1)
+	thread th1(thread_fun), th2(thread_fun1);
+	unique_lock<mutex> lk(g_mutex);
+	g_semValue = 2;
+	if (!g_cv.wait_for(lk, chrono::seconds(5), [=]()->bool {return g_semValue == -1; }))
 	{
-		mt.lock();
-		data += a;
-		std::cout << "add data= " << data << std::endl;
-		mt.unlock();
+		cout << "TimeOut" << endl;
 	}
-}
-
-void cut(int a)
-{
-	while (1)
+	else
 	{
-		mt.lock();
-		data -= a;
-		std::cout << "cut data= " << data << std::endl;
-		mt.unlock();
+		cout << "Ok" << endl;
 	}
-}
-
-int main(int argc, char* argv[])
-{
-	std::thread th1(add, 2);
-	std::thread th2(cut, 1);
-	th1.join();
-	th2.join();
+	th1.detach();
+	th2.detach();
 	return 0;
 }
 
+void thread_fun(void)
+{
+	this_thread::sleep_for(chrono::seconds(10));
+	unique_lock<mutex> lk(g_mutex);
+	if (g_semValue != -1)
+	{
+		--g_semValue;
+		if (g_semValue == 0)
+		{
+			g_semValue = -1;
+			g_cv.notify_one();
+		}
+	}
+}
+
+void thread_fun1(void)
+{
+	this_thread::sleep_for(chrono::seconds(1));
+	unique_lock<mutex> lk(g_mutex);
+	if (g_semValue != -1)
+	{
+		--g_semValue;
+		if (g_semValue == 0)
+		{
+			g_semValue = -1;
+			g_cv.notify_one();
+		}
+	}
+}
