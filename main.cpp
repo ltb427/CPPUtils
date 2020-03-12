@@ -63,7 +63,7 @@ void thread_fun1(void)
 			g_cv.notify_one();
 		}
 	}*/
-	this_thread::sleep_for(chrono::seconds(5));
+	this_thread::sleep_for(chrono::seconds(10));
 	cout << "Wait Ok" << endl;
 	sem.notify();
 }

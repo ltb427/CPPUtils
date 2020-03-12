@@ -40,10 +40,3 @@ void Sem::notify()
 	}
 }
 
-void Sem::SetSem(const int& semValue)
-{
-	std::unique_lock<std::mutex> lock(m_Mutex);
-	m_SemValue = semValue;
-}
-
-
