@@ -21,6 +21,8 @@ public:
 	bool wait(const std::chrono::duration<_Rep, _Period>& _Rel_time);
 	//唤醒
 	void notify();
+	//设置信号值可以
+	void SetSem(const int& semValue);
 
 private:
 	int m_SemValue;

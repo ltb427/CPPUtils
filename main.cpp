@@ -25,7 +25,7 @@ int main()
 	{
 		cout << "Ok" << endl;
 	}*/
-	sem.wait();
+	sem.wait(2);
 	cout << "Ok" << endl;
 	th1.detach();
 	th2.detach();
@@ -45,7 +45,8 @@ void thread_fun(void)
 			g_cv.notify_one();
 		}
 	}*/
-	this_thread::sleep_for(chrono::seconds(10));
+	this_thread::sleep_for(chrono::seconds(5));
+	cout << "Wait Ok" << endl;
 	sem.notify();
 }
 
@@ -62,4 +63,7 @@ void thread_fun1(void)
 			g_cv.notify_one();
 		}
 	}*/
+	this_thread::sleep_for(chrono::seconds(5));
+	cout << "Wait Ok" << endl;
+	sem.notify();
 }
