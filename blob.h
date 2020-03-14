@@ -88,7 +88,7 @@ template<typename T>
 inline T& Blob<T>::operator[](size_type i)
 {
 	// TODO: 在此处插入 return 语句
-	check(0, "back on empty Blob");
+	check(i, "back on empty Blob");
 	return (*data)[i];
 }
 
