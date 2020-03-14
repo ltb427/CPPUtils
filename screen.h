@@ -9,9 +9,11 @@ screen类表示一个窗口，每个Screen对象包含一个用于保存Screen�
 #include <iostream>
 
 namespace yukai {
-	
 	class Screen
 	{
+		//友元函数声明
+		friend std::istream& operator >>(std::istream& is, Screen& screen);
+		friend std::ostream& operator <<(std::ostream& os, const Screen& screen);
 	public:
 		using pos = std::string::size_type;
 		Screen() = default;

@@ -43,4 +43,17 @@ namespace yukai {
 	{
 		os << m_Contents;
 	}
+	//友员函数的定义
+	std::istream& operator >>(std::istream& is, Screen& screen)
+	{
+		// TODO: 在此处插入 return 语句
+		is >> screen.m_Contents;
+		return is;
+	}
+	std::ostream& operator <<(std::ostream& os, const Screen& screen)
+	{
+		// TODO: 在此处插入 return 语句
+		os << screen.m_Contents;
+		return os;
+	}
 }

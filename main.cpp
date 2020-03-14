@@ -8,5 +8,7 @@ int main()
 	std::cout << std::endl;
 	blank.display(std::cout);
 	std::cout << std::endl;
+	std::cin >> myScreen;
+	std::cout << myScreen;
 	return 0;
 }
