@@ -1,25 +1,22 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include "blob.h"
 
 using namespace std;
-
-//函数模板
-template<typename T> inline //inline在模板中的使用方法
-int compare(const T& left, const T& right)
-{
-	if (less<T>()(left, right)) return -1;
-	if (less<T>()(right, left)) return 1;
-	return 0;
-}
-
 
 
 int main()
 {
-	//实例化模板
-	cout << compare(1, 0) << endl;
-	vector<int> vec1{ 4,5,6,6 }, vec2{ 4,5,6,5 };
-	cout << compare(vec1, vec2) << endl;
+	Blob<int> ia;
+	Blob<int> ia2 = {0, 1, 2, 3, 4};
+	ia.push_back(3);
+	int a = ia2.back();
+	cout << a << endl;
+	bool flag = ia.empty();
+	cout << flag << endl;
+	ia.pop_back();
+	a = ia2[3];
+	cout << a << endl;
 	return 0;
 }
