@@ -13,13 +13,26 @@ namespace yukai {
 	class Window_mgr;
 	class Screen;
 
+	class Window_mgr
+	{
+	public:
+		Window_mgr();
+		//屏幕编号
+		using ScreenIndex = std::vector<Screen>::size_type;
+		//置为空白
+		void clear(const ScreenIndex& index);
+	private:
+		//不能直接将成员变量初始化，因为Screen还未定义
+		std::vector<Screen> screens/*{ Screen(24, 80, '1') }*/;
+	};
+
 	class Screen
 	{
 		//友元函数声明
 		friend std::istream& operator >>(std::istream& is, Screen& screen);
 		friend std::ostream& operator <<(std::ostream& os, const Screen& screen);
-		//友员类
-		friend class Window_mgr;
+		//友员类的成员函数
+		friend void Window_mgr::clear(const ScreenIndex& index);
 	public:
 		using pos = std::string::size_type;
 		Screen() = default;
@@ -58,18 +71,6 @@ namespace yukai {
 		return *this;
 	}
 
-	class Window_mgr
-	{
-	public:
-		//屏幕编号
-		using ScreenIndex = std::vector<Screen>::size_type;
-		//置为空白
-		void clear(const ScreenIndex& index);
-		//print
-		void print(const ScreenIndex& index);
-	private:
-		std::vector<Screen> screens{ Screen(24, 80, '1') };
-	};
 
 }
 
