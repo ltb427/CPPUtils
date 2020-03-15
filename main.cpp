@@ -1,14 +1,12 @@
 #include "screen.h"
 
+using namespace yukai;
+
 int main()
 {
-	yukai::Screen myScreen(5,3, '@');
-	const yukai::Screen blank(5, 3, '%');
-	myScreen.set('#').display(std::cout);
-	std::cout << std::endl;
-	blank.display(std::cout);
-	std::cout << std::endl;
-	std::cin >> myScreen;
-	std::cout << myScreen;
+	Window_mgr mgr;
+	mgr.print(0);
+	mgr.clear(0);
+	mgr.print(0);
 	return 0;
 }

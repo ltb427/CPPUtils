@@ -7,13 +7,19 @@ screen类表示一个窗口，每个Screen对象包含一个用于保存Screen�
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace yukai {
+	class Window_mgr;
+	class Screen;
+
 	class Screen
 	{
 		//友元函数声明
 		friend std::istream& operator >>(std::istream& is, Screen& screen);
 		friend std::ostream& operator <<(std::ostream& os, const Screen& screen);
+		//友员类
+		friend class Window_mgr;
 	public:
 		using pos = std::string::size_type;
 		Screen() = default;
@@ -51,6 +57,19 @@ namespace yukai {
 		m_Contents[r * m_Width + col] = c;
 		return *this;
 	}
+
+	class Window_mgr
+	{
+	public:
+		//屏幕编号
+		using ScreenIndex = std::vector<Screen>::size_type;
+		//置为空白
+		void clear(const ScreenIndex& index);
+		//print
+		void print(const ScreenIndex& index);
+	private:
+		std::vector<Screen> screens{ Screen(24, 80, '1') };
+	};
 
 }
 

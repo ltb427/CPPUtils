@@ -56,4 +56,13 @@ namespace yukai {
 		os << screen.m_Contents;
 		return os;
 	}
+	void Window_mgr::clear(const ScreenIndex& index)
+	{
+		Screen& s = screens[index];
+		s.m_Contents = std::string(s.m_Height * s.m_Width, ' ');
+	}
+	void Window_mgr::print(const ScreenIndex& index)
+	{
+		std::cout << screens[index] << std::endl;
+	}
 }
