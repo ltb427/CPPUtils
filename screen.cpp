@@ -65,6 +65,12 @@ namespace yukai {
 		Screen& s = screens[index];
 		s.m_Contents = std::string(s.m_Height * s.m_Width, ' ');
 	}
+	//首先返回类型，之后才进入Window_mgr的作用域
+	Window_mgr::ScreenIndex Window_mgr::addScreen(const Screen& screen)
+	{
+		screens.push_back(screen);
+		return Window_mgr::ScreenIndex(screens.size());
+	}
 	/*void Window_mgr::clear(const ScreenIndex& index)
 	{
 		Screen& s = screens[index];

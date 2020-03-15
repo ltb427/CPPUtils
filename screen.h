@@ -21,6 +21,8 @@ namespace yukai {
 		using ScreenIndex = std::vector<Screen>::size_type;
 		//置为空白
 		void clear(const ScreenIndex& index);
+		//add
+		ScreenIndex addScreen(const Screen& screen);
 	private:
 		//不能直接将成员变量初始化，因为Screen还未定义
 		std::vector<Screen> screens/*{ Screen(24, 80, '1') }*/;
