@@ -124,10 +124,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="sem.cpp" />
+    <ClCompile Include="progressbar.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sem.h" />
+    <ClInclude Include="progressbar.h" />
+    <ClInclude Include="termcolor.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
