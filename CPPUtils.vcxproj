@@ -127,6 +127,7 @@
     <ClCompile Include="progressbar.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="multiprogressbar.hpp" />
     <ClInclude Include="progressbar.h" />
     <ClInclude Include="termcolor.hpp" />
   </ItemGroup>
