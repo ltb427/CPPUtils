@@ -1,13 +1,50 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include "SingleInstance.hpp"
 #include "blob.h"
 
 using namespace std;
 
 
+class Cat : public SingleInstance<Cat>
+{
+public:
+	friend SingleInstance<Cat>;
+	void say()
+	{
+		a += 1;
+		cout << " cat say hello " << a << endl;
+	}
+
+private:
+	Cat()
+	{
+		cout << "SingleIntance::SingleInstanc" << endl;
+		a = 0;
+	}
+
+	~Cat()
+	{
+		cout << "Delete Cat" << endl;
+	}
+
+	Cat(const Cat& rhs)
+	{
+		cout << "SingleInstance::SingleInstance(const SingleIntance& rhs)" << endl;
+	}
+	int a;
+};
+
+
 int main()
 {
+	Cat& cat = Cat::Instance();
+	cat.say();
+	Cat& cat1 = Cat::Instance();
+	cat1.say();
+	Cat& cat2 = Cat::Instance();
+	cat2.say();
 	Blob<int> ia;
 	Blob<int> ia2 = {0, 1, 2, 3, 4};
 	ia.push_back(3);

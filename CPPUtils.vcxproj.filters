@@ -26,5 +26,8 @@
     <ClInclude Include="blob.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SingleInstance.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
