@@ -125,11 +125,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="progressbar.cpp" />
+    <ClCompile Include="threadpool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="multiprogressbar.hpp" />
     <ClInclude Include="progressbar.h" />
     <ClInclude Include="termcolor.hpp" />
+    <ClInclude Include="threadpool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
