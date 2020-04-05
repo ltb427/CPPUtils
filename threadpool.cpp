@@ -45,6 +45,7 @@ ThreadPool::ThreadPool(const ThreadPoolSize size)
 			//std::unique_lock<std::mutex> lock1(m_WorkMutex);
 			m_TaskQueues.emplace(m_Task);
 			m_WorkCv.notify_one();
+			m_MainCv.notify_one();
 		}
 	});
 }
@@ -61,6 +62,10 @@ ThreadPool::~ThreadPool()
 void ThreadPool::pushTask(std::function<void()> task)
 {
 	std::unique_lock<std::mutex> lock(m_WorkMutex);
+	m_MainCv.wait(lock, [this]()->bool 
+	{
+		return !m_HaveNew;
+	});
 	m_HaveNew = true;
 	m_Task = task;
 	m_AdminCv.notify_one();

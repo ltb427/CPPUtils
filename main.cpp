@@ -12,10 +12,10 @@ int main()
 	{
 		pool->pushTask([i]()
 		{
+			std::this_thread::sleep_for(std::chrono::seconds(rand() % 9));
 			std::cout << "hello world " << i <<std::endl;
-			/*std::this_thread::sleep_for(std::chrono::seconds(1));*/
 		});
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		/*if (i ==5 )
 		{
 			pool->stop();
@@ -24,5 +24,6 @@ int main()
 	pool->pushTask([]() {
 		std::cout << "Over" << endl;
 	});
+	//while (1);
 	return 0;
 }

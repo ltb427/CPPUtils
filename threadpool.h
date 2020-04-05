@@ -27,6 +27,7 @@ class ThreadPool
 		std::mutex							m_WorkMutex;
 		std::condition_variable				m_WorkCv;
 		std::condition_variable				m_AdminCv;
+		std::condition_variable				m_MainCv;
 		bool								m_Stop;
 		ThreadPoolSize						m_Size;
 		bool								m_HaveNew;
