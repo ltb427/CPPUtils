@@ -17,7 +17,6 @@ class ThreadPool
 		void start();
 		int getTaskSize()
 		{
-			std::unique_lock<std::mutex> lock(m_WorkMutex);
 			return m_TaskQueues.size();
 		}
 	private:
@@ -25,11 +24,7 @@ class ThreadPool
 		std::queue<std::function<void()>>	m_TaskQueues;
 		std::vector<std::thread>			m_WorkThreds;
 		std::mutex							m_WorkMutex;
-		std::condition_variable				m_WorkCv;
-		std::condition_variable				m_AdminCv;
-		std::condition_variable				m_MainCv;
 		bool								m_Stop;
 		ThreadPoolSize						m_Size;
-		bool								m_HaveNew;
 		std::function<void()>				m_Task;
 };

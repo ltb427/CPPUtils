@@ -2,7 +2,7 @@
 #include <iostream>
 
 ThreadPool::ThreadPool(const ThreadPoolSize size)
-	:m_Stop(false), m_Size(size), m_HaveNew(false)
+	:m_Stop(false), m_Size(size)
 {
 	//init work thread
 	for (size_t i = 0; i < size; i++)
@@ -11,72 +11,47 @@ ThreadPool::ThreadPool(const ThreadPoolSize size)
 		{
 			while (1)
 			{
-				std::unique_lock<std::mutex> lock(m_WorkMutex);
-				m_WorkCv.wait(lock, [this]()->bool
+				/*std::unique_lock<std::mutex> lock(m_WorkMutex);*/
+				m_WorkMutex.lock();
+				if (m_TaskQueues.empty())
 				{
-					return !m_TaskQueues.empty() || m_Stop;
-				});
+					m_WorkMutex.unlock();
+					continue;
+				}
 				if (m_Stop)
 				{
+					m_WorkMutex.unlock();
 					return;
 				}
 				std::function<void()> task;
 				task = std::move(this->m_TaskQueues.front());
 				this->m_TaskQueues.pop();
+				m_WorkMutex.unlock();
 				task();
 			}
 		}));
 	}
-	//init Admin thread
-	m_Admin = std::thread([this]() 
-	{
-		while (1)
-		{
-			std::unique_lock<std::mutex> lock(m_WorkMutex);
-			m_AdminCv.wait(lock, [this]()->bool
-			{
-				return m_HaveNew || m_Stop;
-			});
-			m_HaveNew = false;
-			if (m_Stop)
-			{
-				return;
-			}
-			//std::unique_lock<std::mutex> lock1(m_WorkMutex);
-			m_TaskQueues.emplace(m_Task);
-			m_WorkCv.notify_one();
-			m_MainCv.notify_one();
-		}
-	});
 }
 
 ThreadPool::~ThreadPool()
 {
-	std::cout << "Stop" << std::endl;
-	std::unique_lock<std::mutex> lock(m_WorkMutex);
+	m_WorkMutex.lock();
 	m_Stop = true;
-	m_WorkCv.notify_all();
-	m_AdminCv.notify_one();
+	m_WorkMutex.unlock();
 }
 
 void ThreadPool::pushTask(std::function<void()> task)
 {
-	std::unique_lock<std::mutex> lock(m_WorkMutex);
-	m_MainCv.wait(lock, [this]()->bool 
-	{
-		return !m_HaveNew;
-	});
-	m_HaveNew = true;
-	m_Task = task;
-	m_AdminCv.notify_one();
+	m_WorkMutex.lock();
+	m_TaskQueues.emplace(task);
+	m_WorkMutex.unlock();
 }
 
 void ThreadPool::stop()
 {
-	std::unique_lock<std::mutex> lock(m_WorkMutex);
+	m_WorkMutex.lock();
 	m_Stop = true;
-	m_WorkCv.notify_all();
-	m_AdminCv.notify_one();
+	m_WorkMutex.unlock();
 }
 
 void ThreadPool::start()
@@ -85,5 +60,4 @@ void ThreadPool::start()
 	{
 		work.detach();
 	}
-	m_Admin.detach();
 }
