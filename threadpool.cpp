@@ -2,7 +2,7 @@
 #include <iostream>
 
 ThreadPool::ThreadPool(const ThreadPoolSize size)
-	:m_Stop(false), m_Size(size)
+	:m_Stop(false)
 {
 	//init work thread
 	for (size_t i = 0; i < size; i++)
@@ -11,22 +11,19 @@ ThreadPool::ThreadPool(const ThreadPoolSize size)
 		{
 			while (1)
 			{
-				/*std::unique_lock<std::mutex> lock(m_WorkMutex);*/
-				m_WorkMutex.lock();
-				if (m_TaskQueues.empty())
+				std::unique_lock<std::mutex> lock(m_WorkMutex);
+				m_Cv.wait(lock, [this]()->bool 
 				{
-					m_WorkMutex.unlock();
-					continue;
-				}
+					return !m_TaskQueues.empty() || m_Stop;
+				});
 				if (m_Stop)
 				{
-					m_WorkMutex.unlock();
 					return;
 				}
 				std::function<void()> task;
 				task = std::move(this->m_TaskQueues.front());
 				this->m_TaskQueues.pop();
-				m_WorkMutex.unlock();
+				lock.unlock();
 				task();
 			}
 		}));
@@ -35,23 +32,21 @@ ThreadPool::ThreadPool(const ThreadPoolSize size)
 
 ThreadPool::~ThreadPool()
 {
-	m_WorkMutex.lock();
+	std::unique_lock<std::mutex> lock(m_WorkMutex);
 	m_Stop = true;
-	m_WorkMutex.unlock();
 }
 
 void ThreadPool::pushTask(std::function<void()> task)
 {
-	m_WorkMutex.lock();
+	std::unique_lock<std::mutex> lock(m_WorkMutex);
 	m_TaskQueues.emplace(task);
-	m_WorkMutex.unlock();
+	m_Cv.notify_one();
 }
 
 void ThreadPool::stop()
 {
-	m_WorkMutex.lock();
+	std::unique_lock<std::mutex> lock(m_WorkMutex);
 	m_Stop = true;
-	m_WorkMutex.unlock();
 }
 
 void ThreadPool::start()

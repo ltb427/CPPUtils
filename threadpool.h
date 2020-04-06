@@ -15,16 +15,10 @@ class ThreadPool
 		void pushTask(std::function<void()> task);
 		void stop();
 		void start();
-		int getTaskSize()
-		{
-			return m_TaskQueues.size();
-		}
 	private:
-		std::thread							m_Admin;
 		std::queue<std::function<void()>>	m_TaskQueues;
 		std::vector<std::thread>			m_WorkThreds;
 		std::mutex							m_WorkMutex;
+		std::condition_variable				m_Cv;
 		bool								m_Stop;
-		ThreadPoolSize						m_Size;
-		std::function<void()>				m_Task;
 };

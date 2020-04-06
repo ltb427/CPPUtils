@@ -125,11 +125,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="progressbar.cpp" />
+    <ClCompile Include="sem.cpp" />
     <ClCompile Include="threadpool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="multiprogressbar.hpp" />
     <ClInclude Include="progressbar.h" />
+    <ClInclude Include="sem.h" />
     <ClInclude Include="termcolor.hpp" />
     <ClInclude Include="threadpool.h" />
   </ItemGroup>
