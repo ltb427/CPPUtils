@@ -35,6 +35,12 @@ ThreadPool::~ThreadPool()
 {
 	std::unique_lock<std::mutex> lock(m_WorkMutex);
 	m_Stop = true;
+	m_NullCv.notify_all();
+	m_FullCv.notify_one();
+	for (auto& work : m_WorkThreds)
+	{
+		work.join();
+	}
 }
 
 void ThreadPool::pushTask(std::function<void()> task)
@@ -46,22 +52,20 @@ void ThreadPool::pushTask(std::function<void()> task)
 	});
 	if (m_Stop)
 	{
-		return;
+		throw std::runtime_error("pushTask on stopped ThreadPool");
 	}
 	m_TaskQueues.emplace(task);
-	m_NullCv.notify_one();
+	m_NullCv.notify_all();
 }
 
 void ThreadPool::stop()
 {
 	std::unique_lock<std::mutex> lock(m_WorkMutex);
 	m_Stop = true;
-}
-
-void ThreadPool::start()
-{
+	m_NullCv.notify_all();
+	m_FullCv.notify_one();
 	for (auto& work : m_WorkThreds)
 	{
-		work.detach();
+		work.join();
 	}
 }

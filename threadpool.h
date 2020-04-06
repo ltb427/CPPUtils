@@ -15,7 +15,6 @@ class ThreadPool
 		~ThreadPool();
 		void pushTask(std::function<void()> task);
 		void stop();
-		void start();
 	private:
 		std::queue<std::function<void()>>	m_TaskQueues;
 		std::vector<std::thread>			m_WorkThreds;
