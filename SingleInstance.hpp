@@ -29,12 +29,12 @@ protected:
 
 	SingleInstance()
 	{
-		/*auto buildCG __attribute__((unused)) = &m_Garbo;*/
+		auto buildCG = &m_Garbo;
 	}
 
 	virtual ~SingleInstance()
 	{
-		std::cout << "Delete" << std::endl;
+		std::cout << "Delete Instance" << std::endl;
 	}
 
 	class CGarbo
@@ -46,7 +46,6 @@ protected:
 			{
 				T* tmp = SingleInstance::m_pInstance.load(std::memory_order_acquire);
 				m_pInstance.store(nullptr, std::memory_order_release);
-				std::cout << "Delete" << std::endl;
 				delete tmp;
 			}
 		}
