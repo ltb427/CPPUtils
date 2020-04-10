@@ -45,6 +45,10 @@ int main()
 	cat1.say();
 	Cat& cat2 = Cat::Instance();
 	cat2.say();
+	Cat& cat3 = SingleInstance<Cat>::Instance();
+	cat3.say();
+	Cat& cat4(SingleInstance<Cat>::Instance());
+	cat4.say();
 	Blob<int> ia;
 	Blob<int> ia2 = {0, 1, 2, 3, 4};
 	ia.push_back(3);
