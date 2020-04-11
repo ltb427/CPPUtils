@@ -4,6 +4,7 @@
 #include <vector>
 #include <mutex>
 #include <condition_variable>
+#include <future>
 
 
 class ThreadPool
@@ -13,8 +14,11 @@ class ThreadPool
 		using TaskQueueSize = std::queue<std::function<void()>>::size_type;
 		ThreadPool(const ThreadPoolSize poolSize, const TaskQueueSize taskSize);
 		~ThreadPool();
-		void pushTask(std::function<void()> task);
+		//void pushTask(std::function<void()> task);
 		void stop();
+		template<class F, class... Args>
+		auto pushTask(F&& f, Args&& ... args)
+			->std::future<typename std::result_of<F(Args...)>::type>;
 	private:
 		std::queue<std::function<void()>>	m_TaskQueues;
 		std::vector<std::thread>			m_WorkThreds;
@@ -24,3 +28,31 @@ class ThreadPool
 		bool								m_Stop;
 		TaskQueueSize						m_TaskSize;
 };
+
+// add new work item to the pool
+template<class F, class... Args>
+auto ThreadPool::pushTask(F&& f, Args&& ... args)-> std::future<typename std::result_of<F(Args...)>::type>
+{
+	using return_type = typename std::result_of<F(Args...)>::type;
+
+	auto task = std::make_shared< std::packaged_task<return_type()>>(
+		std::bind(std::forward<F>(f), std::forward<Args>(args)...)
+	);
+
+	std::future<return_type> res = task->get_future();
+	{
+		std::unique_lock<std::mutex> lock(m_WorkMutex);
+		m_FullCv.wait(lock, [this]()->bool
+		{
+			return m_TaskQueues.size() < m_TaskSize || m_Stop;
+		});
+		// don't allow enqueueing after stopping the pool
+		if (m_Stop)
+		{
+			throw std::runtime_error("enqueue on stopped ThreadPool");
+		}
+		m_TaskQueues.emplace([task]() { (*task)(); });
+	}
+	m_NullCv.notify_one();
+	return res;
+}

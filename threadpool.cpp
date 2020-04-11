@@ -11,20 +11,21 @@ ThreadPool::ThreadPool(const ThreadPoolSize poolSize, const TaskQueueSize taskSi
 		{
 			while (1)
 			{
-				std::unique_lock<std::mutex> lock(m_WorkMutex);
-				m_NullCv.wait(lock, [this]()->bool 
-				{
-					return !m_TaskQueues.empty() || m_Stop;
-				});
-				if (m_Stop)
-				{
-					return;
-				}
 				std::function<void()> task;
-				task = std::move(this->m_TaskQueues.front());
-				this->m_TaskQueues.pop();
-				m_FullCv.notify_one();
-				lock.unlock();
+				{
+					std::unique_lock<std::mutex> lock(m_WorkMutex);
+					m_NullCv.wait(lock, [this]()->bool
+					{
+						return !m_TaskQueues.empty() || m_Stop;
+					});
+					if (m_Stop)
+					{
+						return;
+					}
+					task = std::move(this->m_TaskQueues.front());
+					this->m_TaskQueues.pop();
+					m_FullCv.notify_one();
+				}
 				task();
 			}
 		}));
@@ -39,24 +40,25 @@ ThreadPool::~ThreadPool()
 	m_FullCv.notify_one();
 	for (auto& work : m_WorkThreds)
 	{
-		work.join();
+		std::cout << "Delete" << std::endl;
+		work.detach();
 	}
 }
 
-void ThreadPool::pushTask(std::function<void()> task)
-{
-	std::unique_lock<std::mutex> lock(m_WorkMutex);
-	m_FullCv.wait(lock, [this]()->bool 
-	{
-		return m_TaskQueues.size() < m_TaskSize || m_Stop;
-	});
-	if (m_Stop)
-	{
-		throw std::runtime_error("pushTask on stopped ThreadPool");
-	}
-	m_TaskQueues.emplace(task);
-	m_NullCv.notify_all();
-}
+//void ThreadPool::pushTask(std::function<void()> task)
+//{
+//	std::unique_lock<std::mutex> lock(m_WorkMutex);
+//	m_FullCv.wait(lock, [this]()->bool 
+//	{
+//		return m_TaskQueues.size() < m_TaskSize || m_Stop;
+//	});
+//	if (m_Stop)
+//	{
+//		throw std::runtime_error("pushTask on stopped ThreadPool");
+//	}
+//	m_TaskQueues.emplace(task);
+//	m_NullCv.notify_all();
+//}
 
 void ThreadPool::stop()
 {
@@ -66,6 +68,6 @@ void ThreadPool::stop()
 	m_FullCv.notify_one();
 	for (auto& work : m_WorkThreds)
 	{
-		work.join();
+		work.detach();
 	}
 }
