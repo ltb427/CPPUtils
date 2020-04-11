@@ -18,6 +18,11 @@ public:
 	}
 
 private:
+	Cat(const int v)
+		: a(0)
+	{
+		cout << "This is me" << endl;
+	}
 	Cat()
 	{
 		cout << "SingleIntance::SingleInstanc" << endl;
@@ -39,16 +44,10 @@ private:
 
 int main()
 {
-	Cat& cat = Cat::Instance();
+	Cat& cat = Cat::Instance(5);
 	cat.say();
-	Cat& cat1 = Cat::Instance();
+	Cat& cat1 = Cat::Instance(100);
 	cat1.say();
-	Cat& cat2 = Cat::Instance();
-	cat2.say();
-	Cat& cat3 = SingleInstance<Cat>::Instance();
-	cat3.say();
-	Cat& cat4(SingleInstance<Cat>::Instance());
-	cat4.say();
 	Blob<int> ia;
 	Blob<int> ia2 = {0, 1, 2, 3, 4};
 	ia.push_back(3);

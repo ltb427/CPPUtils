@@ -3,13 +3,15 @@
 
 #include <mutex>
 #include <atomic>
+#include <future>
 
 template <typename T>
 class SingleInstance
 {
 public:
 
-	static T& Instance()
+	template<typename V>
+	static T& Instance(V v)
 	{
 		T* tmp = m_pInstance.load(std::memory_order_acquire);
 		if (tmp == nullptr)
@@ -18,7 +20,24 @@ public:
 			tmp = m_pInstance.load(std::memory_order_relaxed);
 			if (tmp == nullptr)
 			{
-				tmp = new T();
+				tmp = new T(v);
+				m_pInstance.store(tmp, std::memory_order_release);
+			}
+		}
+		return *tmp;
+	}
+
+	template<typename... Rail>
+	static T& Instance(Rail... last)
+	{
+		T* tmp = m_pInstance.load(std::memory_order_acquire);
+		if (tmp == nullptr)
+		{
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			tmp = m_pInstance.load(std::memory_order_relaxed);
+			if (tmp == nullptr)
+			{
+				tmp = &(SingleInstance<T>::Instance(last), 0);
 				m_pInstance.store(tmp, std::memory_order_release);
 			}
 		}
@@ -57,9 +76,9 @@ private:
 	SingleInstance& operator = (const SingleInstance& rhs) = delete;
 	SingleInstance& operator = (const SingleInstance&& rhs) = delete;
 
-	static CGarbo m_Garbo;
-	static std::mutex m_Mutex;
-	static std::atomic<T*> volatile m_pInstance;
+	static CGarbo						m_Garbo;
+	static std::mutex					m_Mutex;
+	static std::atomic<T*> volatile		m_pInstance;
 };
 
 template <typename T>
@@ -73,4 +92,3 @@ typename SingleInstance<T>::CGarbo SingleInstance<T>::m_Garbo{};
 
 
 #endif // !__SINGLEINSTANCE_H__
-
