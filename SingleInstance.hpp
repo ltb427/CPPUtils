@@ -3,15 +3,14 @@
 
 #include <mutex>
 #include <atomic>
-#include <future>
 
 template <typename T>
 class SingleInstance
 {
 public:
 
-	template<typename V>
-	static T& Instance(V v)
+	template<typename... Args>
+	static T& Instance(Args... args)
 	{
 		T* tmp = m_pInstance.load(std::memory_order_acquire);
 		if (tmp == nullptr)
@@ -20,24 +19,7 @@ public:
 			tmp = m_pInstance.load(std::memory_order_relaxed);
 			if (tmp == nullptr)
 			{
-				tmp = new T(v);
-				m_pInstance.store(tmp, std::memory_order_release);
-			}
-		}
-		return *tmp;
-	}
-
-	template<typename... Rail>
-	static T& Instance(Rail... last)
-	{
-		T* tmp = m_pInstance.load(std::memory_order_acquire);
-		if (tmp == nullptr)
-		{
-			std::lock_guard<std::mutex> lock(m_Mutex);
-			tmp = m_pInstance.load(std::memory_order_relaxed);
-			if (tmp == nullptr)
-			{
-				tmp = &(SingleInstance<T>::Instance(last), 0);
+				tmp = new T(std::forward<Args>(args)...);
 				m_pInstance.store(tmp, std::memory_order_release);
 			}
 		}
