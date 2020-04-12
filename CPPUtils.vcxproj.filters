@@ -19,6 +19,9 @@
     <Filter Include="工厂模式\简单工厂模式">
       <UniqueIdentifier>{5d7817ed-0209-4f75-8781-b72c707ee6f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="工厂模式\工厂方法模式">
+      <UniqueIdentifier>{c95f21e3-a93a-4f70-9c7a-230c228bfff5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -28,6 +31,9 @@
   <ItemGroup>
     <ClInclude Include="simplefactory.hpp">
       <Filter>工厂模式\简单工厂模式</Filter>
+    </ClInclude>
+    <ClInclude Include="factorymethod.hpp">
+      <Filter>工厂模式\工厂方法模式</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
