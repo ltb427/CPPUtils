@@ -129,6 +129,7 @@
     <ClCompile Include="threadpool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="async.hpp" />
     <ClInclude Include="multiprogressbar.hpp" />
     <ClInclude Include="progressbar.h" />
     <ClInclude Include="sem.h" />
