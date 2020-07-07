@@ -4,6 +4,35 @@
 #include <mutex>
 #include <atomic>
 
+/*
+问题1：必须加这个，否则以下编译不过
+	cout << sum<int>(std::move(a), std::move(b))<< endl;
+	cout << sum<int>(1, b) << endl;
+	cout << sum<int>(1, 2) << endl;
+*/
+//template<typename T1, typename T2>
+//auto sum(T1&& t1, T2&& t2) ->decltype(t1 + t2)
+//{
+//	return t1 + t2;
+//}
+
+/*
+问题2：必须加这个，否则以下编译不过
+	cout << sum<int>(a, b) << endl;
+*/
+//template<typename T1, typename T2>
+//auto sum(T1& t1, T2& t2) ->decltype(t1 + t2)
+//{
+//	return t1 + t2;
+//}
+
+//完美的解决了问题1 和 问题2
+template<typename T1, typename T2>
+auto sum(T1 t1, T2 t2) ->decltype(t1 + t2)
+{
+	return std::forward<T1>(t1) + std::forward<T2>(t2);
+}
+
 template <typename T>
 class SingleInstance
 {

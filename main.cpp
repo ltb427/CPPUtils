@@ -44,19 +44,13 @@ private:
 
 int main()
 {
-	Cat& cat = Cat::Instance(5);
-	cat.say();
-	Cat& cat1 = Cat::Instance(100);
-	cat1.say();
-	Blob<int> ia;
-	Blob<int> ia2 = {0, 1, 2, 3, 4};
-	ia.push_back(3);
-	int a = ia2.back();
-	cout << a << endl;
-	bool flag = ia.empty();
-	cout << flag << endl;
-	ia.pop_back();
-	a = ia2[3];
-	cout << a << endl;
+	int a = 1;
+	int b = 2;
+	int& c = a;
+	int& d = b;
+	cout << sum<int>(std::move(a), std::move(b))<< endl;
+	cout << sum<int>(a, b) << endl;
+	cout << sum<int>(1, b) << endl;
+	cout << sum<int>(1, 2) << endl;
 	return 0;
 }
