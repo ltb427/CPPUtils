@@ -44,13 +44,26 @@ private:
 
 int main()
 {
-	int a = 1;
-	int b = 2;
-	int& c = a;
-	int& d = b;
-	cout << sum<int>(std::move(a), std::move(b))<< endl;
-	cout << sum<int>(a, b) << endl;
-	cout << sum<int>(1, b) << endl;
-	cout << sum<int>(1, 2) << endl;
+	vector<Person> v = { {"aa", 20, "shanghai"}, { "bb", 25, "beijing" }, { "cc", 25, "nanjing" }, { "dd", 20, "nanjing" } };
+	// group by age
+	auto r1 = GroupBy<int>(v, [](const Person& person) {return person.age; });
+	// group by name
+	auto r2 = GroupBy<string>(v, [](const Person& person) {return person.name; });
+	// group by city
+	auto r3 = GroupBy<string>(v, [](const Person& person) {return person.city; });
+	//遍历multimap 方法1 键值查找
+	auto pr = r1.equal_range(20);
+	if (pr.first != std::end(r1))
+	{
+		for (auto iter = pr.first; iter != pr.second; ++iter)
+			std:cout << iter->first << " is " << iter->second.name << std::endl;
+	}
+	//遍历multimap 方法1 条件查找 大于20
+	auto pr1 = r1.upper_bound(20);
+	while (pr1 != std::end(r1))
+	{
+		cout << pr1->second.name << endl;
+		++pr1;
+	}
 	return 0;
 }

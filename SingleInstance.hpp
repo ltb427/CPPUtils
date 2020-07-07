@@ -3,6 +3,12 @@
 
 #include <mutex>
 #include <atomic>
+#include <map>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
 
 /*
 问题1：必须加这个，否则以下编译不过
@@ -31,6 +37,27 @@ template<typename T1, typename T2>
 auto sum(T1 t1, T2 t2) ->decltype(t1 + t2)
 {
 	return std::forward<T1>(t1) + std::forward<T2>(t2);
+}
+
+struct Person
+{
+	string name;
+	int age;
+	string city;
+};
+
+/*
+version 1:按照city，age进行分组。
+*/
+template<typename T, typename Fn>
+multimap<T, Person> GroupBy(const vector<Person>& vt, const Fn& keySlector)
+{
+	multimap<T, Person> map;
+	std::for_each(vt.begin(), vt.end(), [&map, keySlector](const Person& person)
+		{
+			map.insert(make_pair(keySlector(person), person)); //keySlector返回值就是键值，通过keySelector擦除了类型
+		});
+	return map;
 }
 
 template <typename T>
