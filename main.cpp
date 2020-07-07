@@ -6,12 +6,21 @@ using namespace std;
 
 int main()
 {
-	AsyncTask<int> task(([](int i)->int
-		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(i));
-			return 0;
-		}), 2500);
-	int i = task.Execute();
-	cout << "result is " << i << endl;
+	std::future<int> fut = really_async([](int i)->int
+	{
+		std::this_thread::sleep_for(std::chrono::seconds(i));
+		return i;
+	}, 5);
+	std::future_status status = fut.wait_for(std::chrono::seconds(10));
+	if (status == std::future_status::ready)
+	{
+		cout << "ok" << endl;
+		int i = fut.get();
+		cout << "res is " << i << endl;
+	}
+	else
+	{
+		cout << "timeout" << endl;
+	}
 	return 0;
 }
