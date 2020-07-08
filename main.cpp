@@ -13,10 +13,18 @@ int countdown(int from, int to) {
 
 int main()
 {
-	std::packaged_task<int(int, int)> tsk(countdown);   // set up packaged_task
-	std::future<int> ret = tsk.get_future();            // get future
+	//std::packaged_task<int(int, int)> tsk(countdown);   // set up packaged_task
+	std::future<int> ret = std::async(std::launch::async, [](int from, int to)-> int
+	{
+			for (int i = from; i != to; --i) {
+				std::cout << i << '\n';
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+			}
+			std::cout << "Lift off!\n";
+			return from - to;
+	}, 10, 0);
 
-	std::thread th(std::move(tsk), 10, 0);   // spawn thread to count down from 10 to 0
+	//std::thread th(std::move(tsk), 10, 0);   // spawn thread to count down from 10 to 0
 
 	// ...
 
@@ -24,6 +32,6 @@ int main()
 
 	std::cout << "The countdown lasted for " << value << " seconds.\n";
 
-	th.join();
+	//th.join();
 	return 0;
 }
