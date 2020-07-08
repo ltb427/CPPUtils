@@ -1,34 +1,29 @@
 #include <iostream>
 #include "async.hpp"
 
+// count down taking a second for each value:
+int countdown(int from, int to) {
+	for (int i = from; i != to; --i) {
+		std::cout << i << '\n';
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
+	std::cout << "Lift off!\n";
+	return from - to;
+}
+
 int main()
 {
-	/*std::future<bool> fut = std::async(std::launch::async, []()->bool
-		{
-			std::this_thread::sleep_for(std::chrono::seconds(60));
-			return true;
-		});
-	std::cout << "please wait";
-	std::chrono::seconds span(1);
-	while (fut.wait_for(span) != std::future_status::ready)
-		std::cout << ".";
-	std::cout << std::endl;
+	std::packaged_task<int(int, int)> tsk(countdown);   // set up packaged_task
+	std::future<int> ret = tsk.get_future();            // get future
 
-	bool ret = fut.get();
-	std::cout << "final result: " << ret << std::endl;
-	return 0;*/
-	std::promise<int> prom;                      // create promise
+	std::thread th(std::move(tsk), 10, 0);   // spawn thread to count down from 10 to 0
 
-	std::future<int> fut = prom.get_future();    // engagement with future
+	// ...
 
-	std::thread th1([](std::future<int>& fut)
-		{
-			int x = fut.get();
-			std::cout << "value: " << x << '\n';
-		}, std::ref(fut));  // send future to new thread
-	std::this_thread::sleep_for(std::chrono::seconds(5));
-	prom.set_value(10);                         // fulfill promise
-												 // (synchronizes with getting the future)
-	th1.join();
+	int value = ret.get();                  // wait for the task to finish and get result
+
+	std::cout << "The countdown lasted for " << value << " seconds.\n";
+
+	th.join();
 	return 0;
 }
