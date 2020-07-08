@@ -1,6 +1,8 @@
 #pragma once
 #include <future>
 #include <iostream>
+#include <thread>
+#include <functional>
 
 bool is_prime(int x)
 {
