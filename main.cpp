@@ -46,11 +46,11 @@ int main()
 {
 	vector<Person> v = { {"aa", 20, "shanghai"}, { "bb", 25, "beijing" }, { "cc", 25, "nanjing" }, { "dd", 20, "nanjing" } };
 	// group by age
-	auto r1 = GroupBy<int>(v, [](const Person& person) {return person.age; });
+	auto r1 = GroupBy(v, [](const Person& person) {return person.age; });
 	// group by name
-	auto r2 = GroupBy<string>(v, [](const Person& person) {return person.name; });
+	auto r2 = GroupBy(v, [](const Person& person) {return person.name; });
 	// group by city
-	auto r3 = GroupBy<string>(v, [](const Person& person) {return person.city; });
+	auto r3 = GroupBy(v, [](const Person& person) {return person.city; });
 	//遍历multimap 方法1 键值查找
 	auto pr = r1.equal_range(20);
 	if (pr.first != std::end(r1))

@@ -47,18 +47,46 @@ struct Person
 };
 
 /*
-version 1:按照city，age进行分组。
+version 2: 使用result_of,按照city，age进行分组。
 */
-template<typename T, typename Fn>
-multimap<T, Person> GroupBy(const vector<Person>& vt, const Fn& keySlector)
+
+typedef typename vector<Person>::value_type value_type;
+
+template<typename Fn>
+multimap<typename result_of<Fn(value_type)>::type, value_type> GroupBy(const vector<Person>& v, const Fn& f)
 {
-	multimap<T, Person> map;
-	std::for_each(vt.begin(), vt.end(), [&map, keySlector](const Person& person)
+	typedef typename result_of<Fn(value_type)>::type ketype;
+	//typedef  decltype(declval<Fn>()(declval <value_type>())) ketype;
+	multimap<ketype, value_type> mymap;
+	std::for_each(begin(v), end(v), [&mymap, &f](value_type item)
 		{
-			map.insert(make_pair(keySlector(person), person)); //keySlector返回值就是键值，通过keySelector擦除了类型
+			mymap.insert(make_pair(f(item), item));
 		});
-	return map;
+	return mymap;
 }
+
+//result_of的使用方法 留个坑，这个如何调用？
+template< class Obj >
+class CalculusVer2 {
+public:
+	template<class Arg>
+	typename std::result_of<Obj(Arg)>::type operator()(Arg& a) const
+	{
+		return member(a);
+	}
+private:
+	Obj member;
+};
+
+class A
+{
+public:
+	int operator()(const int& a)
+	{
+		cout << a << endl;
+		return a;
+	}
+};
 
 template <typename T>
 class SingleInstance
