@@ -6,21 +6,13 @@ using namespace std;
 
 int main()
 {
-	std::future<int> fut = really_async([](int i)->int
-	{
-		std::this_thread::sleep_for(std::chrono::seconds(i));
-		return i;
-	}, 5);
-	std::future_status status = fut.wait_for(std::chrono::seconds(10));
-	if (status == std::future_status::ready)
-	{
-		cout << "ok" << endl;
-		int i = fut.get();
-		cout << "res is " << i << endl;
-	}
-	else
-	{
-		cout << "timeout" << endl;
-	}
+	std::thread th1(thread_func1, MSG);
+	std::thread th2(thread_func2, MSG);
+	std::thread th3(thread_func3, MSG);
+	std::thread th4(thread_func4, MSG);
+	th1.join();
+	th2.join();
+	th3.join();
+	th4.join();
 	return 0;
 }

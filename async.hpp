@@ -21,6 +21,39 @@ auto really_async(F&& f, Args&& ... args)-> std::future<typename std::result_of<
 	return _fut;
 }
 
+#define MSG	"Hello,std::call_once"
+
+void printTask(const char* msg)
+{
+	std::cout << msg << endl;
+}
+
+void task(const char* msg)
+{
+	static std::once_flag flag;//std::once_flag必须是全局变量或者静态变量
+	std::call_once(flag, printTask, msg);
+}
+
+void thread_func1(const char* msg)
+{
+	task(msg);
+}
+
+void thread_func2(const char* msg)
+{
+	task(msg);
+}
+
+void thread_func3(const char* msg)
+{
+	task(msg);
+}
+
+void thread_func4(const char* msg)
+{
+	task(msg);
+}
+
 template<class T>
 class AsyncTask
 {
