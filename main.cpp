@@ -13,12 +13,23 @@ int call_fn(pfc ptr, int x, int y)
 {
 	return ptr(x,y);
 }
-
-//Slink方式(c++中使用方法较多)
-class IDownLoadFile
+class IObject
 {
 	public:
-		virtual bool OnDownLoadFileFinshed(const char* msg) = 0;
+		virtual bool isTure()
+		{
+			std::cout << __func__ << std::endl;
+			return true;
+		}
+};
+//Slink方式(c++中使用方法较多)
+class IDownLoadFile : public IObject
+{
+	public:
+		virtual bool OnDownLoadFileFinshed(const char* msg)
+		{
+			return false;
+		}
 		IDownLoadFile()
 		{
 			std::cout << __func__ << std::endl;
@@ -47,7 +58,14 @@ class DownLoadFile
 		{
 			if(m_ptr != nullptr)
 			{
-				return m_ptr->OnDownLoadFileFinshed(msg);
+				if(m_ptr->isTure())
+				{
+					return m_ptr->OnDownLoadFileFinshed(msg);
+				}
+				else
+				{
+					return false;
+				}
 			}
 			else
 			{
@@ -86,6 +104,12 @@ class DownLoad : public IDownLoadFile
 		bool OnDownLoadFileFinshed(const char* msg) override
 		{
 			std::cout << "DownLoad Finshed With " << msg << std::endl;
+			return true;
+		}
+		bool isTure() override
+		{
+			std::cout << __func__ << std::endl;
+			std::cout << "DownLoad OK" << std::endl;
 			return true;
 		}
 		//此类中所有在堆区创建的对象都要使用智能指针
