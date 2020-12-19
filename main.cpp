@@ -43,15 +43,13 @@ class IDownLoadFile : public IObject
 class DownLoadFile
 {
 	public:
-		DownLoadFile(std::shared_ptr<IDownLoadFile> ptr)
+		DownLoadFile(IDownLoadFile* ptr)
 			: m_ptr(ptr)
 		{
 			std::cout << __func__ << std::endl;
-			std::cout << "_count:" << m_ptr.use_count() << std::endl;
 		}
 		~DownLoadFile()
 		{
-			std::cout << "count:" << m_ptr.use_count() << std::endl;
 			std::cout << __func__ << std::endl;
 		}
 		bool DownLoadFinshed(const char* msg)
@@ -73,7 +71,7 @@ class DownLoadFile
 			}
 		}
 	private:
-		std::shared_ptr<IDownLoadFile> m_ptr;
+		IDownLoadFile* m_ptr;
 };
 
 class DownLoad : public IDownLoadFile
@@ -83,15 +81,29 @@ class DownLoad : public IDownLoadFile
 			: v(new int(3))
 		{
 			std::cout << __func__ << std::endl;
+			file = new DownLoadFile(this);
 		}
 		~DownLoad()
 		{
+			delete v;
+			delete file;
 			std::cout << __func__ << std::endl;
 		}
 		void DownLoadExc()
 		{
-			DownLoadFile file(std::make_shared<DownLoad>(*this));
-			bool flag = file.DownLoadFinshed("www.baidu.com");
+			bool flag = file->DownLoadFinshed("www.baidu.com");
+			if(flag)
+			{
+				std::cout << "OK" << std::endl;
+			}
+			else
+			{
+				std::cout << "NOK" << std::endl;
+			}
+		}
+		void DownLoadExc1()
+		{
+			bool flag = file->DownLoadFinshed("www.baidu.com");
 			if(flag)
 			{
 				std::cout << "OK" << std::endl;
@@ -113,7 +125,8 @@ class DownLoad : public IDownLoadFile
 			return true;
 		}
 		//此类中所有在堆区创建的对象都要使用智能指针
-		std::shared_ptr<int> v;
+		int* v;
+		DownLoadFile* file;
 };
 
 int main()
@@ -123,6 +136,7 @@ int main()
 	//type 2
 	DownLoad* load = new DownLoad();
 	load->DownLoadExc();
+	load->DownLoadExc1();
 	delete load;
 	return 0;
 }
